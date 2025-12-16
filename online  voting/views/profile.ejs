@@ -1,0 +1,19 @@
+<%- include('partials/header', { title: 'Profile', user: user }) %>
+
+<div class="d-flex justify-content-center py-5">
+  <div class="w-50">
+    <h4>Your Profile</h4>
+    <ul class="list-group">
+      <li class="list-group-item"><strong>Username:</strong> <%= user.username %></li>
+      <li class="list-group-item"><strong>Voter No:</strong> <%= user.voterNo || '-' %></li>
+      <li class="list-group-item"><strong>Role:</strong> <%= user.role %></li>
+      <li class="list-group-item"><strong>Voted:</strong> <%= user.voted ? 'Yes' : 'No' %></li>
+      <% if(user.voted){ %>
+        <li class="list-group-item"><strong>Voted At:</strong> <%= user.votedAt ? new Date(user.votedAt).toLocaleString() : '-' %></li>
+        <li class="list-group-item"><strong>Voted For:</strong> <%= votedCandidateName || '-' %></li>
+      <% } %>
+    </ul>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

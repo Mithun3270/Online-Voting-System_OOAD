@@ -1,0 +1,29 @@
+<%- include('partials/header', { title: 'Login', user: user }) %>
+
+<div class="d-flex align-items-center justify-content-center" style="min-height:72vh;">
+  <div class="card hero-card" style="width:420px;">
+    <div class="card-body">
+      <h4 class="mb-3 text-center">Login</h4>
+      <form method="post" action="/login">
+        <% if(message){ %>
+          <div class="alert alert-info"><%= message %></div>
+        <% } %>
+        <div class="mb-3">
+          <label class="form-label small text-muted">Voter ID</label>
+          <input name="voterNo" class="form-control" placeholder="Voter ID (for voters)">
+        </div>
+        <div class="mb-3">
+          <label class="form-label small text-muted">Username</label>
+          <input name="username" class="form-control" placeholder="Username" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label small text-muted">Password</label>
+          <input name="password" type="password" class="form-control" placeholder="Password" required>
+        </div>
+        <button class="btn btn-primary w-100">Login</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

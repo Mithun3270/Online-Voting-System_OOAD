@@ -1,0 +1,13 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "password": "$2a$10$/2oC1Pwhn1Aa3Y9qJNorlOamNM09x6ijicXJF9h2GdCPARnV5xmUC",
+      "role": "admin"
+    }
+  ],
+  "candidates": [],
+  "votes": {},
+  "electionActive": false
+}

@@ -1,0 +1,18 @@
+<%- include('partials/header', { title: 'Schedule', user: user }) %>
+
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <h2>Election Schedule</h2>
+    <% if(!schedule || (!schedule.startDate && !schedule.endDate)){ %>
+      <div class="alert alert-secondary">No schedule set by admin.</div>
+    <% } else { %>
+      <ul class="list-group">
+        <li class="list-group-item">Start: <strong><%= schedule.startDate ? new Date(schedule.startDate).toLocaleString() : 'N/A' %></strong></li>
+        <li class="list-group-item">End: <strong><%= schedule.endDate ? new Date(schedule.endDate).toLocaleString() : 'N/A' %></strong></li>
+        <li class="list-group-item">Active: <strong><%= schedule.active ? 'Yes' : 'No' %></strong></li>
+      </ul>
+    <% } %>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,143 @@
+<%- include('partials/header', { title: 'Admin', user: user }) %>
+
+<div class="d-flex flex-column gap-3 py-4">
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Election Schedule</h5>
+      <form method="post" action="/admin/election/create" class="d-flex flex-column gap-3">
+        <div class="form-group">
+          <label for="startDate">Start Date & Time</label>
+          <input type="datetime-local" id="startDate" name="startDate" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="endDate">End Date & Time</label>
+          <input type="datetime-local" id="endDate" name="endDate" class="form-control" required>
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn btn-primary">Save Schedule</button>
+        </div>
+      </form>
+
+      <div class="d-flex gap-2 mt-2">
+        <form id="publishForm" method="post" action="/admin/publish" style="display:inline;margin:0">
+          <button class="btn btn-info">Publish Results</button>
+        </form>
+
+        <% if (election && election.active) { %>
+          <form method="post" action="/admin/election/stop" style="display:inline;margin:0">
+            <button class="btn btn-warning">Stop Election</button>
+          </form>
+        <% } else { %>
+          <form method="post" action="/admin/election/start" style="display:inline;margin:0">
+            <button class="btn btn-success">Start Election</button>
+          </form>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mt-4">
+    <div class="card-body">
+      <h5 class="card-title">Candidates</h5>
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="small text-muted">Manage the candidates for this election.</div>
+        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addCandidateModal">Add Candidate</button>
+      </div>
+      <div class="candidates-grid">
+        <% candidates.forEach(function(c){ %>
+          <div class="candidate-card fade-in">
+            <div class="candidate-actions">
+              <button class="btn btn-sm btn-outline-secondary edit-btn" data-id="<%= c.id %>" data-name="<%= c.name.replace(/"/g, '&quot;') %>"><i class="bi bi-pencil"></i></button>
+              <form method="post" action="/admin/candidates/<%= c.id %>/delete" data-name="<%= c.name.replace(/"/g, '&quot;') %>" onsubmit="return confirmDelete(this)" style="display:inline">
+                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+              </form>
+            </div>
+            <div class="d-flex flex-column gap-2">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <div class="candidate-name"><%= c.name %></div>
+                  <div class="candidate-meta">ID: <%= c.id %></div>
+                </div>
+                <div>
+                  <span class="badge badge-vote rounded-pill"><i class="bi bi-people-fill me-1"></i><%= c.votes %></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>
+
+<script>
+      function confirmDelete(form){
+        const name = form.getAttribute('data-name') || 'candidate';
+        return confirm('Delete candidate "' + name + '"? This will remove related votes.');
+      }
+
+      document.addEventListener('click', function(e){
+        const btn = e.target.closest('.edit-btn');
+        if(!btn) return;
+        const id = btn.getAttribute('data-id');
+        const name = btn.getAttribute('data-name');
+        const modalEl = document.getElementById('editCandidateModal');
+        const modal = new bootstrap.Modal(modalEl);
+        const input = document.getElementById('editCandidateName');
+        const form = document.getElementById('editCandidateForm');
+        input.value = name;
+        form.action = '/admin/candidates/' + id + '/edit';
+        modal.show();
+      });
+    </script>
+
+    <!-- Add Candidate Modal -->
+    <div class="modal fade" id="addCandidateModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Add Candidate</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form method="post" action="/admin/candidates/add">
+            <div class="modal-body">
+              <div class="mb-3">
+                <label class="form-label">Candidate Name</label>
+                <input name="name" class="form-control" required>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button class="btn btn-primary">Add</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Candidate Modal -->
+    <div class="modal fade" id="editCandidateModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Edit Candidate</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form id="editCandidateForm" method="post" action="/admin/candidates/0/edit">
+            <div class="modal-body">
+              <div class="mb-3">
+                <label class="form-label">Candidate Name</label>
+                <input id="editCandidateName" name="name" class="form-control" required>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button class="btn btn-primary">Save</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+</script>

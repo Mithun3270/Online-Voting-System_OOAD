@@ -1,0 +1,27 @@
+<%- include('partials/header', { title: 'Verify Voter', user: user }) %>
+
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <h2>Verify Voter Number</h2>
+    <form method="post" action="/verify">
+      <div class="mb-3">
+        <label class="form-label">Voter Number</label>
+        <input name="voterNo" class="form-control" required>
+      </div>
+      <button class="btn btn-primary">Verify</button>
+    </form>
+
+    <% if(result){ %>
+      <% if(!result.ok){ %>
+        <div class="alert alert-danger mt-3"><%= result.message %></div>
+      <% } else { %>
+        <div class="alert alert-success mt-3">Voter <strong><%= result.username %></strong> found. Voter No: <%= result.voterNo %></div>
+        <% if(result.schedule){ %>
+          <div class="small text-muted">Election schedule: <%= result.schedule.startDate ? new Date(result.schedule.startDate).toLocaleString() : 'N/A' %> - <%= result.schedule.endDate ? new Date(result.schedule.endDate).toLocaleString() : 'N/A' %></div>
+        <% } %>
+      <% } %>
+    <% } %>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

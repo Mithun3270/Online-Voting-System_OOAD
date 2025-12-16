@@ -1,0 +1,21 @@
+<%- include('partials/header', { title: 'Register', user: user }) %>
+
+<div class="d-flex justify-content-center py-5">
+  <form method="post" action="/register" class="w-50">
+    <% if(message){ %>
+      <div class="alert alert-warning"><%= message %></div>
+    <% } %>
+    <div class="mb-3">
+      <input name="username" class="form-control" placeholder="Username" required>
+    </div>
+    <div class="mb-3">
+      <input name="password" type="password" class="form-control" placeholder="Password" required>
+    </div>
+    <div class="mb-3">
+      <input name="voterNo" class="form-control" placeholder="Voter Number" required>
+    </div>
+    <button class="btn btn-success w-100">Register</button>
+  </form>
+</div>
+
+<%- include('partials/footer') %>

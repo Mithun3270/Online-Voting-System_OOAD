@@ -1,0 +1,36 @@
+<%- include('partials/header', { title: 'Results', user: user }) %>
+
+<div class="d-flex justify-content-center py-5">
+  <div class="w-50">
+    <% if(!published){ %>
+      <div class="alert alert-warning"><%= message || 'Results are not published yet.' %></div>
+    <% } else { %>
+      <div class="mb-3 small text-muted">Total votes: <strong><%= totalVotes %></strong></div>
+      <div class="results-grid">
+        <% tally.forEach(function(t){ 
+             const pct = totalVotes ? Math.round((t.votes/totalVotes)*100) : 0; %>
+          <div class="card p-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div><strong><%= t.name %></strong></div>
+              <div class="small text-muted"><%= t.votes %> votes</div>
+            </div>
+            <div class="progress" style="height:12px">
+              <div class="progress-bar progress-bar-custom bg-primary" role="progressbar" data-pct="<%= pct %>" aria-valuenow="<%= pct %>" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <div class="small text-end mt-1 text-muted"><%= pct %>%</div>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+    <script>
+      // set progress widths after rendering to avoid EJS/HTML parsing issues with % inside style attrs
+      document.querySelectorAll('.progress-bar[data-pct]').forEach(function(pb){
+        var p = pb.getAttribute('data-pct') || 0;
+        pb.style.width = p + '%';
+      });
+    </script>
+    <a href="/" class="btn btn-outline-secondary w-100">Home</a>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

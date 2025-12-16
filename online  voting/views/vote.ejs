@@ -1,0 +1,77 @@
+<%- include('partials/header', { title: 'Vote', user: user }) %>
+
+<div class="d-flex justify-content-center py-5">
+  <div class="w-50">
+    <h4>Voting Booth</h4>
+    <% if(schedule){ %>
+      <div class="mb-2 small text-muted">Election: <%= schedule.startDate ? new Date(schedule.startDate).toLocaleString() : 'N/A' %> to <%= schedule.endDate ? new Date(schedule.endDate).toLocaleString() : 'N/A' %></div>
+    <% } %>
+    <% if(message){ %>
+      <div class="alert alert-info"><%= message %></div>
+    <% } %>
+
+    <% if(!votingOpen){ %>
+      <div class="alert alert-warning">Voting is not open. You can only vote on the scheduled election date.</div>
+      <% if(!(user && user.role === 'admin')){ %>
+        <div class="mb-3">
+          <label class="form-label">Your Voter Number</label>
+          <input class="form-control" readonly value="<%= (typeof voterNo !== 'undefined' ? voterNo : '') %>">
+        </div>
+      <% } %>
+    <% } else if(alreadyVoted){ %>
+      <div class="alert alert-info">You have already voted.</div>
+    <% } else { %>
+      <form method="post" action="/vote" id="voteForm">
+        <% if(!(user && user.role === 'admin')){ %>
+          <div class="mb-3">
+              <input name="voterNo" class="form-control" placeholder="Confirm Voter Number" required value="<%= (typeof voterNo !== 'undefined' ? voterNo : '') %>">
+          </div>
+        <% } %>
+
+        <div class="candidates-grid mb-3" id="voteGrid">
+          <% candidates.forEach(function(c){ %>
+            <label class="candidate-card" data-id="<%= c._id %>">
+              <input class="vote-radio" type="radio" name="candidateId" value="<%= c._id %>" required>
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <div class="candidate-name"><%= c.name %></div>
+                  <div class="candidate-meta">Candidate</div>
+                </div>
+                <div>
+                  <span class="badge badge-vote rounded-pill"><i class="bi bi-person-fill me-1"></i>Vote</span>
+                </div>
+              </div>
+            </label>
+          <% }) %>
+        </div>
+        <button id="submitBtn" class="btn btn-primary w-100" disabled>Submit Vote</button>
+      </form>
+      <script>
+        // Card selection behavior for voting
+        document.getElementById('voteGrid').addEventListener('click', function(e){
+          const card = e.target.closest('.candidate-card');
+          if(!card) return;
+          // unselect others
+          document.querySelectorAll('#voteGrid .candidate-card').forEach(c=>c.classList.remove('selected'));
+          card.classList.add('selected');
+          const radio = card.querySelector('.vote-radio');
+          if(radio) radio.checked = true;
+          // enable and highlight submit button
+          const submit = document.getElementById('submitBtn');
+          if(submit){ submit.disabled = false; submit.classList.add('btn-submit-highlight'); }
+        });
+
+        // also handle keyboard/radio change events to sync highlight
+        document.querySelectorAll('.vote-radio').forEach(function(r){
+          r.addEventListener('change', function(){
+            document.querySelectorAll('#voteGrid .candidate-card').forEach(c=>c.classList.remove('selected'));
+            const card = r.closest('.candidate-card'); if(card) card.classList.add('selected');
+            const submit = document.getElementById('submitBtn'); if(submit){ submit.disabled = false; submit.classList.add('btn-submit-highlight'); }
+          });
+        });
+      </script>
+    <% } %>
+  </div>
+</div>
+
+<%- include('partials/footer') %>
